@@ -1,0 +1,62 @@
+{% load staticfiles %}
+<div id="courtChart" style="width:auto;height:450px;"></div>
+   {% csrf_token %}
+<script type="text/javascript">
+
+function courtStatistic() {
+
+	var xData = null;
+	var yData = null;
+
+	$.ajax({
+		url: "/courtStatistic",
+		type: "post",
+        data: {
+		    "csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').val()
+        },
+		dataType: "json",
+		success: function(data) {
+			obj = data;
+			xData = obj.xData;
+			yData = obj.yData;
+			 // 初始化图表标签
+		    var myChart = echarts.init(document.getElementById('courtChart'));
+		    var options={
+		        //定义一个标题
+		        title:{
+		            text: '比赛场次统计图'
+		        },
+		        legend:{
+		            data:['场次数量']
+		        },
+		        tooltip : {
+		            trigger: 'axis',
+		            formatter: "{c}场"
+		        },
+		        //X轴设置
+		        xAxis:{
+		            data:xData
+		        },
+		        yAxis:{
+		        },
+		        //name=legend.data的时候才能显示图例
+		        series:[{
+		            name:'场次数量',
+		            type:'bar',
+		            barWidth: 30,//固定柱子宽度
+		            data:yData
+		        }]
+		    };
+		    myChart.setOption(options);
+		}
+	});
+}
+
+courtStatistic();
+
+</script>
+
+<script type="text/javascript" src="{% static 'js/echarts.min.js' %}"></script>
+
+
+

@@ -1,0 +1,74 @@
+{% load staticfiles %}
+{% include 'check_logstate.html' %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/doctorTeam.css' %}" />
+<div id="doctorTeam_EditDiv">
+	<form id="doctorTeamModifyForm" enctype="multipart/form-data"  method="post">
+        {% csrf_token %}
+		<div>
+			<span class="label">团队id:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_teamId_modify" name="doctorTeam.teamId" value="{{ teamId }}" style="width:200px" />
+			</span>
+		</div>
+
+		<div>
+			<span class="label">团队名称:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_teamName_modify" name="doctorTeam.teamName" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">团队照片:</span>
+			<span class="inputControl">
+				<img id="doctorTeam_teamPhotoImgMod" width="200px" border="0px"/><br/>
+				<input id="doctorTeam_teamPhotoMod" name="doctorTeam.teamPhoto" type="file" size="50" />
+			</span>
+		</div>
+		<div>
+			<span class="label">使用状态:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_useState_modify" name="doctorTeam.useState" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">成立日期:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_bornDate_modify" name="doctorTeam.bornDate" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">负责人:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_chargeMan_modify" name="doctorTeam.chargeMan" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">联系电话:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_connectPhone_modify" name="doctorTeam.connectPhone" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">团队介绍:</span>
+			<span class="inputControl">
+				<textarea id="doctorTeam_teamDesc_modify" name="doctorTeam.teamDesc" type="text/plain"   style="width:750px;height:500px;"></textarea>
+
+			</span>
+
+		</div>
+		<div class="operation">
+			<a id="doctorTeamModifyButton" class="easyui-linkbutton">更新</a> 
+		</div>
+	</form>
+</div>
+<script src="{% static 'js/DoctorTeam/doctorTeam_modify.js' %}"></script>

@@ -1,0 +1,174 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+  <TITLE>修改医护团队信息</TITLE>
+  <link href="{% static 'plugins/bootstrap.css' %}" rel="stylesheet">
+  <link href="{% static 'plugins/bootstrap-dashen.css' %}" rel="stylesheet">
+  <link href="{% static 'plugins/font-awesome.css' %}" rel="stylesheet">
+  <link href="{% static 'plugins/animate.css' %}" rel="stylesheet">
+</head>
+<body style="margin-top:70px;"> 
+<div class="container">
+    {% include 'header.html' %}
+	<div class="col-md-9 wow fadeInLeft">
+	<ul class="breadcrumb">
+  		<li><a href="{% url 'Index:index' %}">首页</a></li>
+  		<li class="active">医护团队信息修改</li>
+	</ul>
+		<div class="row"> 
+      	<form class="form-horizontal" name="doctorTeamEditForm" id="doctorTeamEditForm" enctype="multipart/form-data" method="post"  class="mar_t15">
+            {% csrf_token %}
+		  <div class="form-group">
+			 <label for="doctorTeam_teamId_edit" class="col-md-3 text-right">团队id:</label>
+			 <div class="col-md-9"> 
+			 	<input type="text" id="doctorTeam_teamId_edit" name="doctorTeam.teamId" class="form-control" placeholder="请输入团队id" readOnly>
+			 </div>
+		  </div> 
+		  <div class="form-group">
+		  	 <label for="doctorTeam_teamName_edit" class="col-md-3 text-right">团队名称:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_teamName_edit" name="doctorTeam.teamName" class="form-control" placeholder="请输入团队名称">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_teamPhoto_edit" class="col-md-3 text-right">团队照片:</label>
+		  	 <div class="col-md-9">
+			    <img  class="img-responsive" id="doctorTeam_teamPhotoImg" border="0px"/><br/>
+			    <input id="doctorTeam_teamPhoto" name="doctorTeam.teamPhoto" type="file" size="50" />
+		  	 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_useState_edit" class="col-md-3 text-right">使用状态:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_useState_edit" name="doctorTeam.useState" class="form-control" placeholder="请输入使用状态">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_bornDate_edit" class="col-md-3 text-right">成立日期:</label>
+		  	 <div class="col-md-9">
+                <div class="input-group date doctorTeam_bornDate_edit col-md-12" data-link-field="doctorTeam_bornDate_edit" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" id="doctorTeam_bornDate_edit" name="doctorTeam.bornDate" size="16" type="text" value="" placeholder="请选择成立日期" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+		  	 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_chargeMan_edit" class="col-md-3 text-right">负责人:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_chargeMan_edit" name="doctorTeam.chargeMan" class="form-control" placeholder="请输入负责人">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_connectPhone_edit" class="col-md-3 text-right">联系电话:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_connectPhone_edit" name="doctorTeam.connectPhone" class="form-control" placeholder="请输入联系电话">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_teamDesc_edit" class="col-md-3 text-right">团队介绍:</label>
+		  	 <div class="col-md-9">
+			    <textarea name="doctorTeam.teamDesc" id="doctorTeam_teamDesc_edit" type="text/plain"   style="width:100%;height:350px;"></textarea>
+			 </div>
+		  </div>
+			  <div class="form-group">
+			  	<span class="col-md-3"></span>
+			  	<span onclick="ajaxDoctorTeamModify();" class="btn btn-primary bottom5 top5">修改</span>
+			  </div>
+		</form> 
+	    <style>#doctorTeamEditForm .form-group {margin-bottom:5px;}  </style>
+      </div>
+   </div>
+</div>
+
+
+{% include 'footer.html' %}
+<script src="{% static 'plugins/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap.js' %}"></script>
+<script src="{% static 'plugins/wow.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'plugins/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jsdate.js' %}"></script>
+<script src="{% static 'tiny_mce/tiny_mce.js' %}"></script>
+<script>
+/*弹出修改医护团队界面并初始化数据*/
+ function ajaxModifyQuery(teamId) {
+	$.ajax({
+		url :  "/DoctorTeam/update/" + teamId,
+		type : "get",
+		dataType: "json",
+		success : function (doctorTeam, response, status) {
+			if (doctorTeam) {
+				$("#doctorTeam_teamId_edit").val(doctorTeam.teamId);
+				$("#doctorTeam_teamName_edit").val(doctorTeam.teamName);
+				$("#doctorTeam_teamPhotoImg").attr("src", doctorTeam.teamPhoto);
+				$("#doctorTeam_useState_edit").val(doctorTeam.useState);
+				$("#doctorTeam_bornDate_edit").val(doctorTeam.bornDate);
+				$("#doctorTeam_chargeMan_edit").val(doctorTeam.chargeMan);
+				$("#doctorTeam_connectPhone_edit").val(doctorTeam.connectPhone);
+				tinyMCE.editors['doctorTeam_teamDesc_edit'].setContent(doctorTeam.teamDesc);
+			} else {
+				alert("获取信息失败！");
+			}
+		}
+	});
+}
+
+/*ajax方式提交医护团队信息表单给服务器端修改*/
+function ajaxDoctorTeamModify() {
+    $("#doctorTeam_teamDesc_edit").text(tinyMCE.editors['doctorTeam_teamDesc_edit'].getContent());
+	$.ajax({
+		url :  "/DoctorTeam/update/" + $("#doctorTeam_teamId_edit").val(),
+		type : "post",
+		dataType: "json",
+		data: new FormData($("#doctorTeamEditForm")[0]),
+		success : function (obj, response, status) {
+            if(obj.success){
+                alert("信息修改成功！");
+                location.reload(true);
+                $("#doctorTeamQueryForm").submit();
+            }else{
+                alert(obj.message);
+            } 
+		},
+		processData: false,
+		contentType: false,
+	});
+}
+
+$(function(){
+        /*小屏幕导航点击关闭菜单*/
+        $('.navbar-collapse a').click(function(){
+            $('.navbar-collapse').collapse('hide');
+        });
+        new WOW().init();
+    /*成立日期组件*/
+    $('.doctorTeam_bornDate_edit').datetimepicker({
+    	language:  'zh-CN',  //语言
+    	format: 'yyyy-mm-dd',
+    	minView: 2,
+    	weekStart: 1,
+    	todayBtn:  1,
+    	autoclose: 1,
+    	minuteStep: 1,
+    	todayHighlight: 1,
+    	startView: 2,
+    	forceParse: 0
+    });
+    //实例化团队介绍编辑器
+    tinyMCE.init({
+        selector: "#doctorTeam_teamDesc_edit",
+        theme: 'advanced',
+        language: "zh",
+        strict_loading_mode: 1,
+    });
+    setTimeout(ajaxModifyQuery,100,"{{ teamId }}");
+ })
+ </script> 
+</body>
+</html>
+

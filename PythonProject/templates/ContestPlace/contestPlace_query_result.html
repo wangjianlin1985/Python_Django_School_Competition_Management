@@ -1,0 +1,82 @@
+{% include 'check_logstate.html' %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static '/css/contestPlace.css' %}" />
+
+{% csrf_token %}
+<div id="contestPlace_manage"></div>
+<div id="contestPlace_manage_tool" style="padding:5px;">
+	<div style="margin-bottom:5px;">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-edit-new" plain="true" onclick="contestPlace_manage_tool.edit();">修改</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-delete-new" plain="true" onclick="contestPlace_manage_tool.remove();">删除</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true"  onclick="contestPlace_manage_tool.reload();">刷新</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="contestPlace_manage_tool.redo();">取消选择</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-export" plain="true" onclick="contestPlace_manage_tool.exportExcel();">导出到excel</a>
+	</div>
+	<div style="padding:0 0 0 7px;color:#333;">
+		<form id="contestPlaceQueryForm" method="get">
+			场地编号：<input type="text" class="textbox" id="placeNo" name="placeNo" style="width:110px" />
+			运动项目：<input class="textbox" type="text" id="contestItemObj_classId_query" name="contestItemObj.classId" style="width: auto"/>
+			场地名称：<input type="text" class="textbox" id="placeName" name="placeName" style="width:110px" />
+			投入使用时间：<input type="text" id="useDate" name="useDate" class="easyui-datebox" editable="false" style="width:100px">
+			<a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="contestPlace_manage_tool.search();">查询</a>
+		</form>	
+	</div>
+</div>
+
+<div id="contestPlaceEditDiv">
+	<form id="contestPlaceEditForm" enctype="multipart/form-data"  method="post">
+        {% csrf_token %}
+		<div>
+			<span class="label">场地编号:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeNo_edit" name="contestPlace.placeNo" style="width:200px" />
+			</span>
+		</div>
+		<div>
+			<span class="label">运动项目:</span>
+			<span class="inputControl">
+				<input class="textbox"  id="contestPlace_contestItemObj_classId_edit" name="contestPlace.contestItemObj.classId" style="width: auto"/>
+			</span>
+		</div>
+		<div>
+			<span class="label">场地名称:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeName_edit" name="contestPlace.placeName" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地面积:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeArea_edit" name="contestPlace.placeArea" style="width:80px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地照片:</span>
+			<span class="inputControl">
+				<img id="contestPlace_placePhotoImg" width="200px" border="0px"/><br/>
+				<input id="contestPlace_placePhoto" name="contestPlace.placePhoto" type="file" size="50" />
+			</span>
+		</div>
+		<div>
+			<span class="label">投入使用时间:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_useDate_edit" name="contestPlace.useDate" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地描述:</span>
+			<span class="inputControl">
+				<textarea id="contestPlace_placeDesc_edit" name="contestPlace.placeDesc" rows="8" cols="60"></textarea>
+
+			</span>
+
+		</div>
+	</form>
+</div>
+<script type="text/javascript" src="{% static 'js/ContestPlace/contestPlace_manage.js' %}"></script>

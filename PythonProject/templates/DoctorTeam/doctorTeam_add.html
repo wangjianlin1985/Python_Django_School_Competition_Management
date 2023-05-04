@@ -1,0 +1,67 @@
+{% include 'check_logstate.html' %}
+{% load staticfiles %}
+
+ <link rel="stylesheet" type="text/css" href="{% static 'css/doctorTeam.css' %}" />
+<div id="doctorTeamAddDiv">
+    {% csrf_token %}
+	<form id="doctorTeamAddForm" enctype="multipart/form-data"  method="post">
+		<div>
+			<span class="label">团队名称:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_teamName" name="doctorTeam.teamName" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">团队照片:</span>
+			<span class="inputControl">
+				<input id="doctorTeam_teamPhoto" name="doctorTeam.teamPhoto" type="file" size="50" />
+			</span>
+		</div>
+		<div>
+			<span class="label">使用状态:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_useState" name="doctorTeam.useState" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">成立日期:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_bornDate" name="doctorTeam.bornDate" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">负责人:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_chargeMan" name="doctorTeam.chargeMan" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">联系电话:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="doctorTeam_connectPhone" name="doctorTeam.connectPhone" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">团队介绍:</span>
+			<span class="inputControl">
+				<textarea name="doctorTeam.teamDesc" id="doctorTeam_teamDesc" type="text/plain"   style="width:750px;height:500px;"></textarea>
+			</span>
+
+		</div>
+		<div class="operation">
+			<a id="doctorTeamAddButton" class="easyui-linkbutton">添加</a>
+			<a id="doctorTeamClearButton" class="easyui-linkbutton">重填</a>
+		</div> 
+	</form>
+</div>
+<script src="{% static 'js/DoctorTeam/doctorTeam_add.js' %}"></script>

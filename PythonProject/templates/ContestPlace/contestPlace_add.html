@@ -1,0 +1,70 @@
+{% include 'check_logstate.html' %}
+{% load staticfiles %}
+
+ <link rel="stylesheet" type="text/css" href="{% static 'css/contestPlace.css' %}" />
+<div id="contestPlaceAddDiv">
+    {% csrf_token %}
+	<form id="contestPlaceAddForm" enctype="multipart/form-data"  method="post">
+		<div>
+			<span class="label">场地编号:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeNo" name="contestPlace.placeNo" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">运动项目:</span>
+			<span class="inputControl">
+                <select id="contestPlace_contestItemObj_classId" name="contestPlace.contestItemObj.classId" style="width:200px;height:25px;">
+                    {% for contestItem in contestItems %}
+                    <option value="{{ contestItem.classId }}">{{ contestItem.className }}</option>
+                    {% endfor %}
+                </select>
+			</span>
+		</div>
+		<div>
+			<span class="label">场地名称:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeName" name="contestPlace.placeName" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地面积:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeArea" name="contestPlace.placeArea" style="width:80px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地照片:</span>
+			<span class="inputControl">
+				<input id="contestPlace_placePhoto" name="contestPlace.placePhoto" type="file" size="50" />
+			</span>
+		</div>
+		<div>
+			<span class="label">投入使用时间:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_useDate" name="contestPlace.useDate" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地描述:</span>
+			<span class="inputControl">
+				<textarea id="contestPlace_placeDesc" name="contestPlace.placeDesc" rows="6" cols="80"></textarea>
+
+			</span>
+
+		</div>
+		<div class="operation">
+			<a id="contestPlaceAddButton" class="easyui-linkbutton">添加</a>
+			<a id="contestPlaceClearButton" class="easyui-linkbutton">重填</a>
+		</div> 
+	</form>
+</div>
+<script src="{% static 'js/ContestPlace/contestPlace_add.js' %}"></script>

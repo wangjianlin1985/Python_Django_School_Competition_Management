@@ -1,0 +1,64 @@
+{% load staticfiles %}
+{% include 'check_logstate.html' %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/contestPlace.css' %}" />
+<div id="contestPlace_EditDiv">
+	<form id="contestPlaceModifyForm" enctype="multipart/form-data"  method="post">
+        {% csrf_token %}
+		<div>
+			<span class="label">场地编号:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeNo_modify" name="contestPlace.placeNo" value="{{ placeNo }}" style="width:200px" />
+			</span>
+		</div>
+
+		<div>
+			<span class="label">运动项目:</span>
+			<span class="inputControl">
+				<input class="textbox"  id="contestPlace_contestItemObj_classId_modify" name="contestPlace.contestItemObj.classId" style="width: auto"/>
+			</span>
+		</div>
+		<div>
+			<span class="label">场地名称:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeName_modify" name="contestPlace.placeName" style="width:200px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地面积:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_placeArea_modify" name="contestPlace.placeArea" style="width:80px" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地照片:</span>
+			<span class="inputControl">
+				<img id="contestPlace_placePhotoImgMod" width="200px" border="0px"/><br/>
+				<input id="contestPlace_placePhotoMod" name="contestPlace.placePhoto" type="file" size="50" />
+			</span>
+		</div>
+		<div>
+			<span class="label">投入使用时间:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="contestPlace_useDate_modify" name="contestPlace.useDate" />
+
+			</span>
+
+		</div>
+		<div>
+			<span class="label">场地描述:</span>
+			<span class="inputControl">
+				<textarea id="contestPlace_placeDesc_modify" name="contestPlace.placeDesc" rows="8" cols="60"></textarea>
+
+			</span>
+
+		</div>
+		<div class="operation">
+			<a id="contestPlaceModifyButton" class="easyui-linkbutton">更新</a> 
+		</div>
+	</form>
+</div>
+<script src="{% static 'js/ContestPlace/contestPlace_modify.js' %}"></script>

@@ -1,0 +1,197 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+<title>医护团队添加</title>
+<link href="{% static 'plugins/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-dashen.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/font-awesome.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/animate.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" media="screen">
+</head>
+<body style="margin-top:70px;">
+<div class="container">
+{% include 'header.html' %}
+	<div class="col-md-12 wow fadeInLeft">
+		<ul class="breadcrumb">
+  			<li><a href="{% url 'Index:index' %}">首页</a></li>
+  			<li><a href="{% url 'DoctorTeam:frontList' %}">医护团队管理</a></li>
+  			<li class="active">添加医护团队</li>
+		</ul>
+		<div class="row">
+			<div class="col-md-10">
+		      	<form class="form-horizontal" name="doctorTeamAddForm" id="doctorTeamAddForm" enctype="multipart/form-data" method="post"  class="mar_t15">
+				    {% csrf_token %}
+				  <div class="form-group">
+				  	 <label for="doctorTeam_teamName" class="col-md-2 text-right">团队名称:</label>
+				  	 <div class="col-md-8">
+					    <input type="text" id="doctorTeam_teamName" name="doctorTeam.teamName" class="form-control" placeholder="请输入团队名称">
+					 </div>
+				  </div>
+				  <div class="form-group">
+				  	 <label for="doctorTeam_teamPhoto" class="col-md-2 text-right">团队照片:</label>
+				  	 <div class="col-md-8">
+					    <img  class="img-responsive" id="doctorTeam_teamPhotoImg" border="0px"/><br/>
+							    <input id="doctorTeam_teamPhoto" name="doctorTeam.teamPhoto" type="file" size="50" />
+				  	 </div>
+				  </div>
+				  <div class="form-group">
+				  	 <label for="doctorTeam_useState" class="col-md-2 text-right">使用状态:</label>
+				  	 <div class="col-md-8">
+					    <input type="text" id="doctorTeam_useState" name="doctorTeam.useState" class="form-control" placeholder="请输入使用状态">
+					 </div>
+				  </div>
+				  <div class="form-group">
+				  	 <label for="doctorTeam_bornDateDiv" class="col-md-2 text-right">成立日期:</label>
+				  	 <div class="col-md-8">
+		                <div id="doctorTeam_bornDateDiv" class="input-group date doctorTeam_bornDate col-md-12" data-link-field="doctorTeam_bornDate" data-link-format="yyyy-mm-dd">
+		                    <input class="form-control" id="doctorTeam_bornDate" name="doctorTeam.bornDate" size="16" type="text" value="" placeholder="请选择成立日期" readonly>
+		                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+		                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+		                </div>
+				  	 </div>
+				  </div>
+				  <div class="form-group">
+				  	 <label for="doctorTeam_chargeMan" class="col-md-2 text-right">负责人:</label>
+				  	 <div class="col-md-8">
+					    <input type="text" id="doctorTeam_chargeMan" name="doctorTeam.chargeMan" class="form-control" placeholder="请输入负责人">
+					 </div>
+				  </div>
+				  <div class="form-group">
+				  	 <label for="doctorTeam_connectPhone" class="col-md-2 text-right">联系电话:</label>
+				  	 <div class="col-md-8">
+					    <input type="text" id="doctorTeam_connectPhone" name="doctorTeam.connectPhone" class="form-control" placeholder="请输入联系电话">
+					 </div>
+				  </div>
+				  <div class="form-group">
+				  	 <label for="doctorTeam_teamDesc" class="col-md-2 text-right">团队介绍:</label>
+				  	 <div class="col-md-8">
+							    <textarea name="doctorTeam.teamDesc" id="doctorTeam_teamDesc" style="width:100%;height:300px;"></textarea>
+					 </div>
+				  </div>
+		          <div class="form-group">
+		             <span class="col-md-2"></span>
+		             <span onclick="ajaxDoctorTeamAdd();" class="btn btn-primary bottom5 top5">添加</span>
+		          </div> 
+		          <style>#doctorTeamAddForm .form-group {margin:5px;}  </style>  
+				</form> 
+			</div>
+			<div class="col-md-2"></div> 
+	    </div>
+	</div>
+</div>
+{% include 'footer.html' %}
+<script src="{% static 'plugins/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap.js' %}"></script>
+<script src="{% static 'plugins/wow.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrapvalidator/js/bootstrapValidator.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/bootstrap-datetimepicker.min.js' %}" charset="UTF-8"></script>
+<script type="text/javascript" src="{% static 'plugins/locales/bootstrap-datetimepicker.zh-CN.js' %}" charset="UTF-8"></script>
+<script src="{% static 'tiny_mce/tiny_mce.js' %}"></script>
+<script>
+    //实例化团队介绍编辑器
+    tinyMCE.init({
+        selector: "#doctorTeam_teamDesc",
+        theme: 'advanced',
+        language: "zh",
+        strict_loading_mode: 1,
+    });
+	//提交添加医护团队信息
+	function ajaxDoctorTeamAdd() { 
+	    $("#doctorTeam_teamDesc").text(tinyMCE.editors['doctorTeam_teamDesc'].getContent());
+		//提交之前先验证表单
+		$("#doctorTeamAddForm").data('bootstrapValidator').validate();
+		if(!$("#doctorTeamAddForm").data('bootstrapValidator').isValid()){
+			return;
+		}
+		jQuery.ajax({
+			type : "post",
+			url : "{% url 'DoctorTeam:frontAdd' %}",
+			dataType : "json" , 
+			data: new FormData($("#doctorTeamAddForm")[0]),
+			success : function(obj) {
+				if(obj.success){ 
+					alert("保存成功！");
+					location.reload();
+				} else {
+					alert(obj.message);
+				}
+			},
+			processData: false, 
+			contentType: false, 
+		});
+	} 
+$(function(){
+	/*小屏幕导航点击关闭菜单*/
+    $('.navbar-collapse a').click(function(){
+        $('.navbar-collapse').collapse('hide');
+    });
+    new WOW().init();
+	//验证医护团队添加表单字段
+	$('#doctorTeamAddForm').bootstrapValidator({
+		feedbackIcons: {
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+		fields: {
+			"doctorTeam.teamName": {
+				validators: {
+					notEmpty: {
+						message: "团队名称不能为空",
+					}
+				}
+			},
+			"doctorTeam.useState": {
+				validators: {
+					notEmpty: {
+						message: "使用状态不能为空",
+					}
+				}
+			},
+			"doctorTeam.bornDate": {
+				validators: {
+					notEmpty: {
+						message: "成立日期不能为空",
+					}
+				}
+			},
+			"doctorTeam.chargeMan": {
+				validators: {
+					notEmpty: {
+						message: "负责人不能为空",
+					}
+				}
+			},
+			"doctorTeam.connectPhone": {
+				validators: {
+					notEmpty: {
+						message: "联系电话不能为空",
+					}
+				}
+			},
+		}
+	}); 
+	//成立日期组件
+	$('#doctorTeam_bornDateDiv').datetimepicker({
+		language:  'zh-CN',  //显示语言
+		format: 'yyyy-mm-dd',
+		minView: 2,
+		weekStart: 1,
+		todayBtn:  1,
+		autoclose: 1,
+		minuteStep: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 0
+	}).on('hide',function(e) {
+		//下面这行代码解决日期组件改变日期后不验证的问题
+		$('#doctorTeamAddForm').data('bootstrapValidator').updateStatus('doctorTeam.bornDate', 'NOT_VALIDATED',null).validateField('doctorTeam.bornDate');
+	});
+})
+</script>
+</body>
+</html>

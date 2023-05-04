@@ -1,0 +1,307 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+<title>医护团队查询</title>
+<link href="{% static 'plugins/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-dashen.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/font-awesome.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/animate.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" media="screen">
+</head>
+<body style="margin-top:70px;">
+<div class="container">
+{% include 'header.html' %}
+	<div class="col-md-3 wow fadeInLeft">
+		<div class="page-header">
+    		<h1>医护团队查询</h1>
+		</div>
+		<form name="doctorTeamQueryForm" id="doctorTeamQueryForm" action="{% url 'DoctorTeam:frontList' %}" class="mar_t15" method="post">
+			 {% csrf_token %}
+			<div class="form-group">
+				<label for="teamName">团队名称:</label>
+				<input type="text" id="teamName" name="teamName" value="{{ teamName }}" class="form-control" placeholder="请输入团队名称">
+			</div>
+			<div class="form-group">
+				<label for="useState">使用状态:</label>
+				<input type="text" id="useState" name="useState" value="{{ useState }}" class="form-control" placeholder="请输入使用状态">
+			</div>
+			<div class="form-group">
+				<label for="bornDate">成立日期:</label>
+				<input type="text" id="bornDate" name="bornDate" class="form-control"  placeholder="请选择成立日期" value="{{ bornDate }}" onclick="SelectDate(this,'yyyy-MM-dd')" />
+			</div>
+            <input type=hidden name=currentPage value="{{ currentPage }}" />
+            <button type="submit" class="btn btn-primary">查询</button>
+        </form>
+	</div>
+
+	<div class="col-md-9 wow fadeInRight">
+		<ul class="breadcrumb">
+  			<li><a href="{% url 'Index:index' %}">首页</a></li>
+  			<li><a href="{% url 'DoctorTeam:frontList' %}">医护团队信息列表</a></li>
+  			<li class="active">查询结果显示</li>
+  			<a class="pull-right" href="{% url 'DoctorTeam:frontAdd' %}" style="display:none;">添加医护团队</a>
+		</ul>
+		<div class="row">
+            {% for doctorTeam in doctorTeams_page %}
+                {% if forloop.counter|add:-1|divisibleby:4 %}
+			<div class="col-md-3 bottom15" style="clear: left;">
+                {% else %}
+            <div class="col-md-3 bottom15">
+                {% endif %}
+			  <a  href="{% url 'DoctorTeam:frontShow' doctorTeam.teamId %}"><img class="img-responsive" src="{{ doctorTeam.teamPhoto.url }}" /></a>
+			     <div class="showFields">
+			     	<div class="field">
+	            		团队id:{{ doctorTeam.teamId }}
+			     	</div>
+			     	<div class="field">
+	            		团队名称:{{ doctorTeam.teamName }}
+			     	</div>
+			     	<div class="field">
+	            		使用状态:{{ doctorTeam.useState }}
+			     	</div>
+			     	<div class="field">
+	            		成立日期:{{ doctorTeam.bornDate }}
+			     	</div>
+			     	<div class="field">
+	            		负责人:{{ doctorTeam.chargeMan }}
+			     	</div>
+			     	<div class="field">
+	            		联系电话:{{ doctorTeam.connectPhone }}
+			     	</div>
+			        <a class="btn btn-primary top5" href="{% url 'DoctorTeam:frontShow' doctorTeam.teamId  %}">详情</a>
+			        <a class="btn btn-primary top5" onclick="doctorTeamEdit('{{ doctorTeam.teamId }}');" style="display: none;">修改</a>
+			        <a class="btn btn-primary top5" onclick="doctorTeamDelete('{{ doctorTeam.teamId }}');" style="display: none;">删除</a>
+			     </div>
+			</div>
+			{% endfor %}
+
+			<div class="row">
+				<div class="col-md-12">
+					<nav class="pull-left">
+						<ul class="pagination">
+							<li><a href="#" onclick="GoToPage({{ currentPage|add:-1 }},{{ totalPage }});" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+							{% for page in pageList %}
+                                            {% if currentPage == page %}
+						                        <li class="active"><a href="#"  onclick="GoToPage({{ page }},{{ totalPage }});">{{ page }}</a></li>
+						                    {% else %}
+                                                <li><a href="#"  onclick="GoToPage({{ page }},{{ totalPage }});">{{ page }}</a></li>
+                                            {% endif %}
+                                            {% endfor %}
+						                    <li><a href="#" onclick="GoToPage({{ currentPage|add:1 }},{{ totalPage }});"><span aria-hidden="true">&raquo;</span></a></li>
+						</ul>
+					</nav>
+					<div class="pull-right" style="line-height:75px;" >共有{{ recordNumber }}条记录，当前第{{ currentPage }}/{{ totalPage }} 页</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+  </div>
+</div>
+<div id="doctorTeamEditDialog" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" style="width:900px;" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-edit"></i>&nbsp;医护团队信息编辑</h4>
+      </div>
+      <div class="modal-body" style="height:450px; overflow: scroll;">
+      	<form class="form-horizontal" name="doctorTeamEditForm" id="doctorTeamEditForm" enctype="multipart/form-data" method="post"  class="mar_t15">
+		    {% csrf_token %}
+		  <div class="form-group">
+			 <label for="doctorTeam_teamId_edit" class="col-md-3 text-right">团队id:</label>
+			 <div class="col-md-9"> 
+			 	<input type="text" id="doctorTeam_teamId_edit" name="doctorTeam.teamId" class="form-control" placeholder="请输入团队id" readOnly>
+			 </div>
+		  </div> 
+		  <div class="form-group">
+		  	 <label for="doctorTeam_teamName_edit" class="col-md-3 text-right">团队名称:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_teamName_edit" name="doctorTeam.teamName" class="form-control" placeholder="请输入团队名称">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_teamPhoto_edit" class="col-md-3 text-right">团队照片:</label>
+		  	 <div class="col-md-9">
+			    <img  class="img-responsive" id="doctorTeam_teamPhotoImg" border="0px"/><br/>
+			    <input id="doctorTeam_teamPhoto" name="doctorTeam.teamPhoto" type="file" size="50" />
+		  	 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_useState_edit" class="col-md-3 text-right">使用状态:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_useState_edit" name="doctorTeam.useState" class="form-control" placeholder="请输入使用状态">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_bornDate_edit" class="col-md-3 text-right">成立日期:</label>
+		  	 <div class="col-md-9">
+                <div class="input-group date doctorTeam_bornDate_edit col-md-12" data-link-field="doctorTeam_bornDate_edit" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" id="doctorTeam_bornDate_edit" name="doctorTeam.bornDate" size="16" type="text" value="" placeholder="请选择成立日期" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+		  	 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_chargeMan_edit" class="col-md-3 text-right">负责人:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_chargeMan_edit" name="doctorTeam.chargeMan" class="form-control" placeholder="请输入负责人">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_connectPhone_edit" class="col-md-3 text-right">联系电话:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="doctorTeam_connectPhone_edit" name="doctorTeam.connectPhone" class="form-control" placeholder="请输入联系电话">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="doctorTeam_teamDesc_edit" class="col-md-3 text-right">团队介绍:</label>
+		  	 <div class="col-md-9">
+			 	<textarea name="doctorTeam.teamDesc" id="doctorTeam_teamDesc_edit" style="width:100%;height:400px;"></textarea>
+			 </div>
+		  </div>
+		</form> 
+	    <style>#doctorTeamEditForm .form-group {margin-bottom:5px;}  </style>
+      </div>
+      <div class="modal-footer"> 
+      	<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      	<button type="button" class="btn btn-primary" onclick="ajaxDoctorTeamModify();">提交</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% include 'footer.html' %}
+<script src="{% static 'plugins/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap.js' %}"></script>
+<script src="{% static 'plugins/wow.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'plugins/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jsdate.js' %}"></script>
+<script src="{% static 'tiny_mce/tiny_mce.js' %}"></script>
+<script>
+//实例化团队介绍编辑器
+    tinyMCE.init({
+        selector: "#doctorTeam_teamDesc_edit",
+        theme: 'advanced',
+        language: "zh",
+        strict_loading_mode: 1,
+    });
+/*跳转到查询结果的某页*/
+function GoToPage(currentPage,totalPage) {
+    if(currentPage==0) return;
+    if(currentPage>totalPage) return;
+    document.doctorTeamQueryForm.currentPage.value = currentPage;
+    document.doctorTeamQueryForm.submit();
+}
+
+/*可以直接跳转到某页*/
+function changepage(totalPage)
+{
+    var pageValue=document.doctorTeamQueryForm.pageValue.value;
+    if(pageValue>totalPage) {
+        alert('你输入的页码超出了总页数!');
+        return ;
+    }
+    document.doctorTeamQueryForm.currentPage.value = pageValue;
+    documentdoctorTeamQueryForm.submit();
+}
+
+/*弹出修改医护团队界面并初始化数据*/
+function doctorTeamEdit(teamId) {
+	$.ajax({
+		url :  '/DoctorTeam/update/' + teamId,
+		type : "get",
+		dataType: "json",
+		success : function (doctorTeam, response, status) {
+			if (doctorTeam) {
+				$("#doctorTeam_teamId_edit").val(doctorTeam.teamId);
+				$("#doctorTeam_teamName_edit").val(doctorTeam.teamName);
+				$("#doctorTeam_teamPhotoImg").attr("src", doctorTeam.teamPhoto);
+				$("#doctorTeam_useState_edit").val(doctorTeam.useState);
+				$("#doctorTeam_bornDate_edit").val(doctorTeam.bornDate);
+				$("#doctorTeam_chargeMan_edit").val(doctorTeam.chargeMan);
+				$("#doctorTeam_connectPhone_edit").val(doctorTeam.connectPhone);
+                tinyMCE.editors['doctorTeam_teamDesc_edit'].setContent(doctorTeam.teamDesc);
+				$('#doctorTeamEditDialog').modal('show');
+			} else {
+				alert("获取信息失败！");
+			}
+		}
+	});
+}
+
+/*删除医护团队信息*/
+function doctorTeamDelete(teamId) {
+    var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+	if(confirm("确认删除这个记录")) {
+		$.ajax({
+			type : "POST",
+			url : "/DoctorTeam/deletes",
+			data : {
+				teamIds : teamId,
+                "csrfmiddlewaretoken": csrf
+			},
+			success : function (obj) {
+				if (obj.success) {
+					alert("删除成功");
+					$("#doctorTeamQueryForm").submit();
+					//location.href= basePath + "DoctorTeam/frontlist";
+				}
+				else 
+					alert(obj.message);
+			},
+		});
+	}
+}
+
+/*ajax方式提交医护团队信息表单给服务器端修改*/
+function ajaxDoctorTeamModify() {
+    $("#doctorTeam_teamDesc_edit").text(tinyMCE.editors['doctorTeam_teamDesc_edit'].getContent());
+	$.ajax({
+		url :   '/DoctorTeam/update/' + $("#doctorTeam_teamId_edit").val(),
+		type : "post",
+		dataType: "json",
+		data: new FormData($("#doctorTeamEditForm")[0]),
+		success : function (obj, response, status) {
+            if(obj.success){
+                alert("信息修改成功！");
+                $("#doctorTeamQueryForm").submit();
+            }else{
+                alert(obj.message);
+            } 
+		},
+		processData: false,
+		contentType: false,
+	});
+}
+
+$(function(){
+	/*小屏幕导航点击关闭菜单*/
+    $('.navbar-collapse a').click(function(){
+        $('.navbar-collapse').collapse('hide');
+    });
+    new WOW().init();
+
+    /*成立日期组件*/
+    $('.doctorTeam_bornDate_edit').datetimepicker({
+    	language:  'zh-CN',  //语言
+    	format: 'yyyy-mm-dd',
+    	minView: 2,
+    	weekStart: 1,
+    	todayBtn:  1,
+    	autoclose: 1,
+    	minuteStep: 1,
+    	todayHighlight: 1,
+    	startView: 2,
+    	forceParse: 0
+    });
+})
+</script>
+</body>
+</html>
+
